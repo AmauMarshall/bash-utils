@@ -162,7 +162,11 @@ alias camstr='cam-stream'
 vegeta-attack() {
     DATETIME=$(date +%F)_$(date +%T)
     echo $1 | vegeta attack -duration=$2s -rate=$3 -output=attack_$DATETIME.log
-    if ["$4"=="json"]; then REPORT_TYPE=json else REPORT_TYPE=text fi
+    if ["$4"=="json"]; then
+        REPORT_TYPE=json
+    else
+        REPORT_TYPE=text
+    fi
     cat attack_$DATETIME.log | vegeta report -type=$REPORT_TYPE -output=report_$DATETIME.log
     echo -e "Attack logs: attack_$DATETIME.log\nReport logs: report_$DATETIME.log"
 }
