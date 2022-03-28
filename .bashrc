@@ -167,6 +167,10 @@ vegeta-attack() {
     cat $DIR_NAME/attack_$DATETIME.log | vegeta encode -to=json -output=$DIR_NAME/attack_$DATETIME.json
     cat $DIR_NAME/attack_$DATETIME.log | vegeta encode -to=csv -output=$DIR_NAME/attack_$DATETIME.csv
     cat $DIR_NAME/attack_$DATETIME.log | vegeta report -type=text -output=$DIR_NAME/report_$DATETIME.log
+    echo "$DIR_NAME/attack_$DATETIME.log"
+    echo "$DIR_NAME/attack_$DATETIME.json"
+    echo "$DIR_NAME/attack_$DATETIME.csv"
+    echo "$DIR_NAME/report_$DATETIME.log"
 }
 alias vatt='vegeta-attack'
 alias cdvegeta='cd ~/vegeta-go/'
