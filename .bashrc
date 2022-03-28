@@ -161,9 +161,12 @@ alias camstr='cam-stream'
 ### Vegeta stuff
 vegeta-attack() {
     DATETIME=$(date +%F)_$(date +%T)
-    echo $1 | vegeta attack -duration=$2s -rate=$3 -output=attack_$DATETIME.log
-    cat attack_$DATETIME.log | vegeta report -type=text -output=report_$DATETIME.log
-    echo -e "attack_$DATETIME.log\nreport_$DATETIME.log"
+    DIR_NAME=echo "attack_$DATETIME"
+    mkdir $DIR_NAME
+    echo $1 | vegeta attack -duration=$2s -rate=$3 -output=$DIR_NAME/attack_$DATETIME.log
+    cat $DIR_NAME/attack_$DATETIME.log | vegeta encode -to=json -output=$DIR_NAME/attack_$DATETIME.json
+    cat $DIR_NAME/attack_$DATETIME.log | vegeta encode -to=csv -output=$DIR_NAME/attack_$DATETIME.csv
+    cat $DIR_NAME/attack_$DATETIME.log | vegeta report -type=text -output=$DIR_NAME/report_$DATETIME.log
 }
 alias vatt='vegeta-attack'
 alias cdvegeta='cd ~/vegeta-go/'
