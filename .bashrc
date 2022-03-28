@@ -162,12 +162,14 @@ alias camstr='cam-stream'
 vegeta-attack() {
     if [ "$4" == "log" ]; then
         echo $1 | vegeta attack -duration=$2s -rate=$3 | vegeta report -type=text > $5
-	cat $5
     else
-    	echo $1 | vegeta attack -duration=$2s -rate=$3
+    	echo $1 | vegeta attack -duration=$2s -rate=$3 > $4
+	echo -e "\x$(cat $4)" > $5
     fi
+    cat $5
 }
 alias vatt='vegeta-attack'
+alias cdvegeta='cd ~/vegeta-go/'
 
 #### Dev VM
 alias cdgit='cd /git'
