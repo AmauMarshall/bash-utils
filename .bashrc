@@ -163,7 +163,7 @@ vegeta-attack() {
     DATETIME=$(date +%F)_$(date +%T)
     echo $1 | vegeta attack -duration=$2s -rate=$3 -output=attack_$DATETIME.log
     cat attack_$DATETIME.log | vegeta report -type=text -output=report_$DATETIME.log
-    echo -e "Attack logs: attack_$DATETIME.log\nReport logs: report_$DATETIME.log"
+    echo -e "attack_$DATETIME.log\nreport_$DATETIME.log"
 }
 alias vatt='vegeta-attack'
 alias cdvegeta='cd ~/vegeta-go/'
