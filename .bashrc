@@ -127,8 +127,8 @@ alias aptcl='sudo apt autoremove && sudo apt clean && sudo apt autoclean'
 alias aptin='sudo apt install' 
 
 ## Bash aliases
-alias hcl='rm ~/.bash_history && history -c'
-alias brc='. .bashrc'
+alias hcl='rm -f ~/.bash_history && history -c'
+alias brc='. ~/.bashrc'
 alias vimbrc='vim ~/.bashrc'
 alias subrc='subl ~/.bashrc' 
 
@@ -158,6 +158,16 @@ cam-stream() {
 }
 alias camstr='cam-stream'
 
+### Vegeta stuff
+vegeta-attack() {
+    if [ "$4" == "log" ]; then
+        echo $1 | vegeta attach -duration=$2s -rate=$3 | vegeta report -type=text > $5
+	cat $5
+    else
+    	echo $1 | vegeta attach -duration=$2s -rate=$3
+    fi
+}
+alias vatt='vegeta-attack'
 
 #### Dev VM
 alias cdgit='cd /git'
