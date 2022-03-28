@@ -166,7 +166,9 @@ vegeta-attack() {
     	echo $1 | vegeta attack -duration=$2s -rate=$3 > $4
 	echo -e "\x$(cat $4)" > $5
     fi
-    cat $5
+    if [ "$6" == "cat" ]; then
+    	cat $5
+    fi
 }
 alias vatt='vegeta-attack'
 alias cdvegeta='cd ~/vegeta-go/'
