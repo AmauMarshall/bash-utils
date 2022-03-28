@@ -164,7 +164,7 @@ vegeta-attack() {
     DIR_NAME=attack_$DATETIME
     mkdir "/vegeta/$DIR_NAME"
     touch "$1"
-    echo $1 | vegeta attack -duration=$2s -rate=$3 -output="$DIR_NAME/attack_$DATETIME.log"
+    echo "$1" | vegeta attack -duration="$2"s -rate="$3" -output="$DIR_NAME/attack_$DATETIME.log"
     cat "$DIR_NAME/attack_$DATETIME.log" | vegeta encode -to=json -output="$DIR_NAME/attack_$DATETIME.json"
     cat "$DIR_NAME/attack_$DATETIME.log" | vegeta encode -to=csv -output="$DIR_NAME/attack_$DATETIME.csv"
     cat "$DIR_NAME/attack_$DATETIME.log" | vegeta report -type=text -output="$DIR_NAME/report_$DATETIME.log"
@@ -174,7 +174,7 @@ vegeta-attack() {
 }
 alias vatt='vegeta-attack'
 vatt-cat() {
-    cat $(vegeta-attack $1 $2 $3 | grep report)
+    cat $(vegeta-attack "$1" "$2" "$3" | grep report)
 }
 alias cdvegeta='cd /vegeta/'
 
