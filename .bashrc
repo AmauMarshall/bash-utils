@@ -173,6 +173,9 @@ vegeta-attack() {
     echo "$DIR_NAME/report_$DATETIME.log"
 }
 alias vatt='vegeta-attack'
+vatt-cat() {
+    cat $(vegeta-attack $1 $2 $3 | grep report)
+}
 alias cdvegeta='cd /vegeta/'
 
 #### Dev VM
