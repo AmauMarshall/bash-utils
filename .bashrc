@@ -174,13 +174,16 @@ vegeta-attack() {
     echo "$DIR_NAME/report_$DATETIME.log"
 }
 alias vatt='vegeta-attack'
-vatt-cat() {
-    cat $(vegeta-attack "$1" "$2" "$3" | grep report)
-}
-alias cdvegeta='cd /vegeta/'
 decode64() {
     cat $1 | cut -d',' -f7 | base64 --decode | sed -e "s/}/}\n/g"
 }
+vatt-cat() {
+    OUT_STRING=$(vegeta-attack "$1" "$2" "$3")
+    cat $($OUT_STRING | grep report)
+    decode64 $($OUT_STRING | grep csv)
+}
+alias cdvegeta='cd /vegeta/'
+
 
 #### Dev VM
 alias cdgit='cd /git'
