@@ -130,7 +130,8 @@ alias aptin='sudo apt install'
 alias hcl='rm -f ~/.bash_history && history -c'
 alias brc='. ~/.bashrc'
 alias vimbrc='vim ~/.bashrc'
-alias subrc='subl ~/.bashrc' 
+alias subrc='subl ~/.bashrc'
+alias cdbrc='cd /bashrc'
 
 ## Network aliases
 alias reset-resolv='echo -e "nameserver 8.8.8.8\nsearch mobilisis.local" | sudo tee /etc/resolv.conf > /dev/null'
