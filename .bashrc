@@ -178,9 +178,10 @@ decode64() {
     cat $1 | cut -d',' -f7 | base64 --decode | sed -e "s/}/}\n/g"
 }
 vatt-cat() {
-    OUT_STRING=$(vegeta-attack "$1" "$2" "$3")
-    cat $(echo $OUT_STRING | grep report)
-    decode64 $(echo $OUT_STRING | grep csv)
+    vegeta-attack "$1" "$2" "$3" > res.txt
+    cat $(cat res.txt | grep report)
+    decode64 $(cat res.txt | grep csv)
+    rm res.txt
 }
 alias cdvegeta='cd /vegeta/'
 
