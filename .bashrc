@@ -165,7 +165,7 @@ vegeta-attack() {
     DIR_NAME="/vegeta/attack_$DATETIME"
     mkdir "$DIR_NAME"
     touch "$DIR_NAME/$(echo "$1" | sed "s/\//_/g")"
-    echo "$1" | vegeta attack -duration="$2"s -rate="$3" -timeout=300s -output="$DIR_NAME/attack_$DATETIME.log"
+    echo "$1" | vegeta attack -duration="$2"s -rate="$3" -timeout=60s -output="$DIR_NAME/attack_$DATETIME.log"
     cat "$DIR_NAME/attack_$DATETIME.log" | vegeta encode -to=json -output="$DIR_NAME/attack_$DATETIME.json"
     cat "$DIR_NAME/attack_$DATETIME.log" | vegeta encode -to=csv -output="$DIR_NAME/attack_$DATETIME.csv"
     cat "$DIR_NAME/attack_$DATETIME.log" | vegeta report -type=text -output="$DIR_NAME/report_$DATETIME.log"
