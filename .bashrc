@@ -179,8 +179,8 @@ decode64() {
 }
 vatt-cat() {
     OUT_STRING=$(vegeta-attack "$1" "$2" "$3")
-    cat $($OUT_STRING | grep report)
-    decode64 $($OUT_STRING | grep csv)
+    cat $(echo $OUT_STRING | grep report)
+    decode64 $(echo $OUT_STRING | grep csv)
 }
 alias cdvegeta='cd /vegeta/'
 
