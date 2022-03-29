@@ -178,6 +178,9 @@ vatt-cat() {
     cat $(vegeta-attack "$1" "$2" "$3" | grep report)
 }
 alias cdvegeta='cd /vegeta/'
+decode64() {
+    cat $1 | cut -d',' -f7 | base64 --decode | sed -e "s/}/N\n/g"
+}
 
 #### Dev VM
 alias cdgit='cd /git'
