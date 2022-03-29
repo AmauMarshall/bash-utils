@@ -179,7 +179,7 @@ vatt-cat() {
 }
 alias cdvegeta='cd /vegeta/'
 decode64() {
-    cat $1 | cut -d',' -f7 | base64 --decode | sed -e "s/}/N\n/g"
+    cat $1 | cut -d',' -f7 | base64 --decode | sed -e "s/}/}\n/g"
 }
 
 #### Dev VM
