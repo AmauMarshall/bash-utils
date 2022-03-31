@@ -158,6 +158,7 @@ cam-stream() {
     gst-launch-1.0 -v v4l2src device=/dev/video0 ! videoconvert ! vp8enc ! rtpvp8pay ! udpsink host=$1 port=$2
 }
 alias camstr='cam-stream'
+alias kd='killall droidcam'
 
 ### Vegeta stuff
 vegeta-attack() {
