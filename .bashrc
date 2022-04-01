@@ -163,6 +163,7 @@ file-stream() {
 }
 alias filestr='file-stream'
 alias kd='killall droidcam'
+alias cam-on='droidcam-cli 10.10.30.51 4747'
 
 ### Vegeta stuff
 vegeta-attack() {
