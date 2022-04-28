@@ -143,6 +143,7 @@ alias reset-resolv='echo -e "nameserver 8.8.8.8\nsearch mobilisis.local" | sudo 
 
 ### DOCKER Stuff
 alias dc='docker-compose'
+alias dcres='dc down -v && dc up -d && dc logs -f'
 
 ### GIT Stuff
 git-sparse-clone() {
@@ -205,11 +206,3 @@ alias cdh='cd /home'
 alias cdjanus='cd ~/projects/amr-janus/'
 alias cdrm='cd ~/projects/amr-robot-module/'
 alias cdhc='cd ~/projects/amr-health-check/'
-
-
-#### Tye being a bitch
-export PATH="$PATH:$HOME/.dotnet/tools"
-export DOTNET_ROOT=/snap/dotnet-sdk/current
-export MSBuildSDKsPath=$DOTNET_ROOT/sdk/$(${DOTNET_ROOT}/dotnet --version)/Sdks
-export PATH="${PATH}:${DOTNET_ROOT}"
-export PATH="$PATH:$HOME/.dotnet/tools"
