@@ -79,16 +79,16 @@ if [ -x /usr/bin/dircolors ]; then
     #alias dir='dir --color=auto'
     #alias vdir='vdir --color=auto'
 
-    alias grep='grep --color=auto -n'
-    alias fgrep='fgrep --color=auto -n'
-    alias egrep='egrep --color=auto -n'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+    alias ngrep='grep --color=auto -n'
 fi
 
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 #ssh aliases
-alias ssh-dev='ssh amarechal@10.10.11.241'
 alias ssh-janus='ssh janus@10.10.10.50'
 
 # some more ls aliases
@@ -120,18 +120,26 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# On startup (if commands require sudo, add line to /etc/sudoers: "%sudo ALL=(ALL) NOPASSWD: /path/to/command")
+if [ $(ifconfig | grep eth0:1 -c) -eq 0 ]; then
+    sudo ip addr add 10.10.10.2/24 broadcast 10.10.10.255 dev eth0 label eth0:1;
+fi
+
 # Personal preferences
 alias cd..='cd ..'
 alias cd.='cd /'
+alias x='exit'
 
 
 ## Aptitude aliases
-alias aptup='sudo apt update && sudo apt upgrade'
-alias aptcl='sudo apt autoremove && sudo apt clean && sudo apt autoclean'
-alias aptin='sudo apt install' 
+alias aptup='sudo apt update && sudo apt upgrade -y'
+alias aptcl='sudo apt autoremove -y && sudo apt clean -y && sudo apt autoclean -y'
+alias aptin='sudo apt install -y' 
 
 ## Bash aliases
-alias hcl='rm -f ~/.bash_history && history -c'
+alias userls='cut -d: -f1 /etc/passwd'
+alias hcl='rm -f ~/.bash_history && history -c && reset'
+alias cls='rm -f ~/.bash_history && history -c && reset'
 alias brc='. ~/.bashrc'
 alias vimbrc='vim ~/.bashrc'
 alias subrc='subl ~/.bashrc'
@@ -140,6 +148,12 @@ alias cdbrc='cd /bashrc'
 ## Network aliases
 alias reset-resolv='echo -e "nameserver 8.8.8.8\nsearch mobilisis.local" | sudo tee /etc/resolv.conf > /dev/null'
 
+
+### Dumb stuff
+pnis() {
+    ascii-image-converter ~amarechal/Pictures/welcome.png -cCx
+}
+alias pp='pnis'
 
 ### DOCKER Stuff
 alias dc='docker-compose'
@@ -206,3 +220,56 @@ alias cdh='cd /home'
 alias cdjanus='cd ~/projects/amr-janus/'
 alias cdrm='cd ~/projects/amr-robot-module/'
 alias cdhc='cd ~/projects/amr-health-check/'
+
+### Ros Stuff
+source /opt/ros/noetic/setup.bash
+source ~amarechal/moby/devel/setup.bash
+alias rosgo='roslaunch rosbridge_server rosbridge_websocket.launch'
+rosws() {
+    if [ -z "$1" ]; then
+        wscat -c "ws://10.10.10.2:9090"
+    elif [ -z "$2" ]; then
+        wscat -c "ws://$1:9090"
+    else 
+        wscat -c "ws://$1:$2"
+    fi
+}
+
+### WSL stuff
+alias c:='cd /mnt/c/users/amarechal'
+alias wsloff='cmd.exe /c wsl --shutdown'
+xp() {
+    if [ -z "$1" ]; then
+        explorer.exe . 
+    else
+	   explorer.exe $1 
+    fi
+}
+switch_default_terminal() {
+    settingsPath="/mnt/c/users/amarechal/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json"
+    greper="grep guid $settingsPath"
+
+    if [ $($greper -c) -ge $1 ]; then
+        uuid=$($greper | cut -d{ -f2 | cut -d} -f1 | head -n$1 | tail -n1)
+        sed -i "s/\"defaultProfile\": \"{.*}\"/\"defaultProfile\": \"{$uuid}\"/" $settingsPath
+    else
+        echo -e "\033[1;31mERROR:\033[0;31m cannot switch to terminal profile n°$1 because it does not exist.\033[0m"
+    fi
+}
+alias term='switch_default_terminal'
+
+### IP stuff
+getip() {
+    if [ -z "$1" ]; then
+        ip -4 addr | grep -oP '(?<=inet\s)\d+(\.\d+){3}'
+    else
+        ip -4 addr show $1 | grep -oP '(?<=inet\s)\d+(\.\d+){3}'
+    fi
+}
+lsip() {
+     if [ -z "$1" ]; then
+        ifconfig | grep -v "^ " | grep -v "^[[:space:]]*$" | cut -d' ' -f1
+    else
+        ifconfig | grep ^$1 | cut -d' ' -f1
+    fi
+}
