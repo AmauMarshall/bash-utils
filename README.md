@@ -2,7 +2,7 @@
 
 ### Get with
 
-`wget https://raw.githubusercontent.com/AmauMarshall/bashrc/main/.bashrc`
+`wget https://raw.githubusercontent.com/AmauMarshall/bash-utils/main/.bashrc`
 
 ### or clone repo and extract:
 
