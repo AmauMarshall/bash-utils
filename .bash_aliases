@@ -1,7 +1,14 @@
-### ALIAS
+## ALIAS
 setalias() {
-    echo "alias $1='$2'" >> ~/.bash_aliases 
-    source ~/.bash_aliases
+    if [ -n "$1" ] && [ -n "$2" ]; then
+        echo "alias $1='$2'" >> ~/.bash_aliases 
+        source ~/.bash_aliases
+    fi
+}
+rmalias() {
+    if [ -n "$1" ]; then
+        sed -i "s/^alias $1=/#alias $1=/" ~/.bash_aliases 
+    fi
 }
 
 ### RENAME
@@ -153,6 +160,9 @@ rospid() {
 roskill() {
         kill -9 $(rospid)
 }
+killproc() {
+    kill -9 $(ps aux | grep "$1" | grep -v grep | awk '{print $2}')
+}
 
 ### PYTHON
 alias python='python3'
@@ -204,3 +214,5 @@ pnis() {
     ascii-image-converter /usr/share/welcome.png -cCx
 }
 alias pp='pnis'
+
+alias rm*='rm *'
