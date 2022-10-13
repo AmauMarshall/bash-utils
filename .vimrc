@@ -4,7 +4,7 @@ filetype plugin on
 filetype indent on
 syntax enable
 colorscheme monokai
-
+set mouse=a
 
 set number relativenumber
 set cursorline
@@ -73,26 +73,28 @@ nnoremap Y y$
 nnoremap <f5> :w <CR>:!clear <CR>:!python3 % <CR>
 
 " Remaps Shift + +/- to :split and :vsplit
-nnoremap <S-right> <c-w>v
-nnoremap <S-down> <c-w>s
+nnoremap <S-right> <C-w>v
+nnoremap <S-down> <C-w>s
 nnoremap <C-w> <esc>:wq<return>
 
 " You can split the window in Vim by typing :split or :vsplit.
 " Navigate the split view easier by pressing CTRL+j, CTRL+k, CTRL+h, or CTRL+l.
-nnoremap <A-down> <c-w>j
-nnoremap <A-up> <c-w>k
-nnoremap <A-left> <c-w>h
-nnoremap <A-right> <c-w>l
+nnoremap <A-down> <C-w>j
+nnoremap <A-up> <C-w>k
+nnoremap <A-left> <C-w>h
+nnoremap <A-right> <C-w>l
 
 " Resize split windows using arrow keys by pressing:
 " CTRL+UP, CTRL+DOWN, CTRL+LEFT, or CTRL+RIGHT.
-noremap <c-up> <c-w>+
-noremap <c-down> <c-w>-
-noremap <c-right> <c-w>>
-noremap <c-left> <c-w><
+noremap <C-up> <C-w>+
+noremap <C-down> <C-w>-
+noremap <C-right> <C-w>>
+noremap <C-left> <C-w><
 
-nnoremap <C-z> u
-nnoremap <C-y> <C-r>
+nnoremap r <C-r>
+
+map <ScrollWheelUp> <C-y>
+map <ScrollWheelDown> <C-e>
 
 " NERDTree specific mappings.
 " Map the F3 key to toggle NERDTree open and close.
@@ -145,25 +147,25 @@ if has('gui_running')
 
     " Display more of the file by default.
     " Hide the toolbar.
-    set guioptions-=T
+    set guioptionS-=T
 
     " Hide the the left-side scroll bar.
-    set guioptions-=L
+    set guioptionS-=L
 
     " Hide the the right-side scroll bar.
-    set guioptions-=r
+    set guioptionS-=r
 
     " Hide the the menu bar.
-    set guioptions-=m
+    set guioptionS-=m
 
     " Hide the the bottom scroll bar.
-    set guioptions-=b
+    set guioptionS-=b
 
     " Map the F4 key to toggle the menu, toolbar, and scroll bar.
     " <Bar> is the pipe character.
     " <CR> is the enter key.
     nnoremap <F4> :if &guioptions=~#'mTr'<Bar>
-        \set guioptions-=mTr<Bar>
+        \set guioptionS-=mTr<Bar>
         \else<Bar>
         \set guioptions+=mTr<Bar>
         \endif<CR>
