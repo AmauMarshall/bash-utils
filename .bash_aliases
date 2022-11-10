@@ -11,6 +11,21 @@ rmalias() {
     fi
 }
 
+### BIN
+mkbin() {
+    mkdir -p /home/$USER/.bin
+    if [ -z $2 ]; then
+        ln -s $(readlink -f $1) /home/$USER/.bin/$(basename $1)
+    else
+        ln -s $(readlink -f $1) /home/$USER/.bin/$2
+    fi
+}
+rmbin() {
+    rm /home/$USER/.bin/$1
+}
+alias llbin='ll /home/$USER/.bin'
+alias cdbin='cd /home/$USER/.bin'
+
 ### RENAME
 renamepc() {
         sudo sed -i "s/$(hostname)/$1/" /etc/hosts /etc/hostname
@@ -18,9 +33,18 @@ renamepc() {
         echo "Don't forget to restart to apply!"
 }
 
-### CD
+### DIR
+alias mkdir='mkdir -p'
+cddir() {
+    mkdir -p $1
+    cd $1
+}
 alias cd..='cd ..'
 alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
 alias cd.='cd /'
 alias x='exit'
 
@@ -140,11 +164,14 @@ alias gsc='git-sparse-clone'
 #alias cdvegeta='cd /vegeta/'
 
 ### ROS
-source /opt/ros/noetic/setup.bash
-source /home/$USER/moby/devel/setup.bash
-alias rosgo='roslaunch rosbridge_server rosbridge_websocket.launch'
-alias rtl='rostopic list'
-alias rnl='rosnode list'
+source /opt/ros/$ROS_DISTRO/setup.bash
+source /home/$USER/ros_apps/setup.bash
+#alias rosgo='roslaunch rosbridge_server rosbridge_websocket.launch'
+alias rosgo='ros2 launch rosbridge_server rosbridge_websocket_launch.xml'
+#alias rtl='rostopic list'
+alias rtl='ros2 topic list'
+#alias rnl='rosnode list'
+alias rnl='ros2 node list'
 rosws() {
     if [ -z "$1" ]; then
         wscat -c "ws://0.0.0.0:9090"
@@ -158,7 +185,7 @@ rospid() {
     ps aux | grep "rosbridge" | grep -v "grep" | awk '{print $2}'
 }
 roskill() {
-        kill -9 $(rospid)
+    kill -9 $(rospid)
 }
 killproc() {
     kill -9 $(ps aux | grep "$1" | grep -v grep | awk '{print $2}')
@@ -167,6 +194,7 @@ killproc() {
 ### PYTHON
 alias python='python3'
 alias py='python3'
+alias p='python3'
 
 ### SSH
 sshdis() {
@@ -215,4 +243,10 @@ pnis() {
 }
 alias pp='pnis'
 
+### SPOT
+alias ss='ssh spot'
+alias ssd='sshdis spot & sleep(3) && vncviewer :0 && kill %$(jobs | cut -d[ -f2 | cut -d] -f1)'
+
 alias rm*='rm *'
+alias r='reset'
+alias wpy='win py'
