@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+import pwd
+import platform
+
+user = pwd.getpwuid(os.getuid())[0]
+host = platform.node()
+path = os.getcwd()
+
+sys.ps1 = '\x01\x1b[1;33m\x02[ py3 ] \x01\x1b[1;31m\x02'+user+'\x01\x1b[1;0m\x02@\x01\x1b[1;35m\x02'+host+'\x01\x1b[1;0m\x02:\x01\x1b[01;36m\x02'+path+' \x01\x1b[1;37m\x02>>>\x01\x1b[0;0m\x02 '

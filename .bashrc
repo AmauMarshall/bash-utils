@@ -47,3 +47,4 @@ fi
 
 # Set prompt
 prompt
+export PYTHONSTARTUP=~/.pyrc # Python prompt
