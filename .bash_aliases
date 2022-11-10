@@ -245,7 +245,7 @@ alias pp='pnis'
 
 ### SPOT
 alias ss='ssh spot'
-alias ssd='sshdis spot & sleep(3) && vncviewer :0 && kill %$(jobs | cut -d[ -f2 | cut -d] -f1)'
+alias ssd='sshdis spot & sleep(3) && vncviewer :0 && kill %$(jobs | grep "sshdis spot" | cut -d[ -f2 | cut -d] -f1)'
 
 alias rm*='rm *'
 alias r='reset'
