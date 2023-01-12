@@ -14,6 +14,7 @@ shopt -s globstar
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+complete -d cd
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -42,9 +43,12 @@ fi
 
 # On startup (if commands require sudo, add line to /etc/sudoers: "%sudo ALL=(ALL) NOPASSWD: /path/to/command")
 if [ $(ifconfig | grep eth0:1 -c) -eq 0 ]; then
-    sudo ip addr add 10.10.10.2/24 broadcast 10.10.10.255 dev eth0 label eth0:1;
+    sudo ip addr add 192.168.0.2/24 broadcast 192.168.0.255 dev eth0 label eth0:1
 fi
 
 # Set prompt
 prompt
 export PYTHONSTARTUP=~/.pyrc # Python prompt
+
+# startup folder choice
+startup

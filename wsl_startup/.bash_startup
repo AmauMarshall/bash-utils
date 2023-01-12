@@ -1,0 +1,39 @@
+#!/bin/bash
+
+startup_help() {
+    echo "-h, --help     Show this help message"
+    echo "-e, --edit     Edit startup script"
+    echo "-r, --reset    Resets startup directory"
+}
+
+if [ -n $1 ]; then
+    if [ "$1" == "-e" ] || [ "$1" == "--edit" ]; then
+        vim ~/.bash_startup
+    elif [ "$1" == "-r" ] || [ "$1" == "--reset" ]; then
+        unset BASHSTARTUPDIR
+    elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+        startup_help
+    fi
+fi
+
+if [ -z $BASHSTARTUPDIR ]; then
+    echo "Where to start?"
+    echo "w: Windows user folder"
+    echo "g: Windows git repos folder"
+    echo "_: Linux user folder"
+    echo -n "Choice: "
+    
+    read choice
+    num='^[0-9]+$'
+    
+    if [ "$choice" == "w" ]; then
+        export BASHSTARTUPDIR=/mnt/c/users/$USER/
+    elif [ "$choice" == "g" ]; then
+        export BASHSTARTUPDIR=/mnt/c/users/$USER/source/repos
+    else
+        export BASHSTARTUPDIR=/home/$USER/
+    fi                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+    
+    cd $BASHSTARTUPDIR
+    reset
+fi
