@@ -11,21 +11,6 @@ rmalias() {
     fi
 }
 
-### BIN
-mkbin() {
-    mkdir -p /home/$USER/.bin
-    if [ -z $2 ]; then
-        ln -s $(readlink -f $1) /home/$USER/.bin/$(basename $1)
-    else
-        ln -s $(readlink -f $1) /home/$USER/.bin/$2
-    fi
-}
-rmbin() {
-    rm /home/$USER/.bin/$1
-}
-alias llbin='ll /home/$USER/.bin'
-alias cdbin='cd /home/$USER/.bin'
-
 ### RENAME
 renamepc() {
         sudo sed -i "s/$(hostname)/$1/" /etc/hosts /etc/hostname
@@ -33,20 +18,15 @@ renamepc() {
         echo "Don't forget to restart to apply!"
 }
 
-### DIR
-alias mkdir='mkdir -p'
-cddir() {
-    mkdir -p $1
-    cd $1
-}
+### CD
 alias cd..='cd ..'
+alias cd.='cd /'
+alias x='exit'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias ......='cd ../../../../..'
-alias cd.='cd /'
-alias x='exit'
 
 ### APT
 alias aptup='sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y'
@@ -58,11 +38,13 @@ alias aptrem='sudo apt autoremove -y'
 alias userls='cut -d: -f1 /etc/passwd'
 alias hcl='rm -f ~/.bash_history && history -c && reset'
 alias cls='rm -f ~/.bash_history && history -c && reset'
-alias brc='source ~/.bashrc'
-alias bashrc='vim ~/.bashrc && source ~/.bashrc'
-alias bashal='vim ~/.bash_aliases && source ~/.bashrc'
+alias brc='currentBrc=$(pwd) && source ~/.bashrc && cd "$currentBrc" && unset currentBrc'
+alias bashrc='vim ~/.bashrc && brc'
+alias bashal='vim ~/.bash_aliases && brc'
 alias vimrc='vim ~/.vimrc'
-alias prompt='. ~/.bash_prompt'
+alias pyrc='vim ~/.pyrc'
+alias prompt='source ~/.bash_prompt'
+alias startup='source ~/.bash_startup'
 
 ### LS
 alias ls='ls --color=auto'
@@ -72,12 +54,24 @@ alias la='ls -A'
 alias l='ls -CF'
 alias lsdev='ls /dev/*'
 
+### RM
+alias rm*='rm *'
+
 ### GREP
 alias grep='grep --color=auto -E'
 alias ngrep='grep --color=auto -nE'
+astrogrep () 
+{ 
+    find $1 ! -type d | while read -r line; do
+        if [ $(grep -Enc $2 $line) -gt 0 ]; then
+            echo $line;
+            grep --color=auto -En $2 $line;
+            echo;
+        fi;
+    done
+}
 
 ### NET
-#alias reset-resolv='echo -e "nameserver 8.8.8.8\nsearch mobilisis.local" | sudo tee /etc/resolv.conf > /dev/null'
 getip() {
     if [ -z "$1" ]; then
         ip -4 addr | /usr/bin/grep -oP '(?<=inet\s)\d+(\.\d+){3}'
@@ -95,7 +89,17 @@ lsip() {
 
 ### DOCKER
 alias dc='docker-compose'
-alias dcres='dc down -v && dc up -d && dc logs -f'
+dcres() {
+    if [ -n "$1" ]; then
+        dc -f $1 down -v
+        dc -f $1 up -d
+        dc -f $1 logs -f
+    else
+        dc down -v
+        dc up -d
+        dc logs -f
+    fi
+}
 
 ### GIT
 gitinit() {
@@ -164,14 +168,11 @@ alias gsc='git-sparse-clone'
 #alias cdvegeta='cd /vegeta/'
 
 ### ROS
-source /opt/ros/$ROS_DISTRO/setup.bash
-source /home/$USER/ros_apps/setup.bash
-#alias rosgo='roslaunch rosbridge_server rosbridge_websocket.launch'
-alias rosgo='ros2 launch rosbridge_server rosbridge_websocket_launch.xml'
-#alias rtl='rostopic list'
-alias rtl='ros2 topic list'
-#alias rnl='rosnode list'
-alias rnl='ros2 node list'
+#source /opt/ros/noetic/setup.bash
+#source /home/$USER/moby/devel/setup.bash
+alias rosgo='roslaunch rosbridge_server rosbridge_websocket.launch'
+alias rtl='rostopic list'
+alias rnl='rosnode list'
 rosws() {
     if [ -z "$1" ]; then
         wscat -c "ws://0.0.0.0:9090"
@@ -185,7 +186,7 @@ rospid() {
     ps aux | grep "rosbridge" | grep -v "grep" | awk '{print $2}'
 }
 roskill() {
-    kill -9 $(rospid)
+        kill -9 $(rospid)
 }
 killproc() {
     kill -9 $(ps aux | grep "$1" | grep -v grep | awk '{print $2}')
@@ -194,7 +195,6 @@ killproc() {
 ### PYTHON
 alias python='python3'
 alias py='python3'
-alias p='python3'
 
 ### SSH
 sshdis() {
@@ -203,12 +203,14 @@ sshdis() {
 
 ### VNC
 initVcXsrv() {
-    current=$pwd
+    currentVcXsrv=$pwd
     cd /mnt/c/users/$USER/Documents
-    cmd.exe /c taskkill /IM vcxsrv.exe /F
-    cmd.exe /c config.xlaunch
-    cd $current
-    unset current
+    if [ $(cmd.exe /c tasklist | grep -c vcxsrv) -ne 1 ]; then
+        cmd.exe /c taskkill /IM vcxsrv.exe /F
+        cmd.exe /c config.xlaunch
+    fi
+    cd $currentVcXsrv
+    unset currentVcXsrv
     export DISPLAY="`grep nameserver /etc/resolv.conf | sed 's/nameserver //'`:0"
 }
 initVcXsrv > /dev/null 2>&1
@@ -216,6 +218,9 @@ alias win='DISPLAY=10.10.10.232:0'
 
 ### WSL
 alias c:='cd /mnt/c/users/$USER'
+alias C:='cd /mnt/c/users/$USER'
+alias cc:='cd /mnt/c/users/$USER/source/repos/'
+alias CC:='cd /mnt/c/users/$USER/source/repos/'
 alias wsloff='cmd.exe /c wsl --shutdown'
 xp() {
     if [ -z "$1" ]; then
@@ -224,29 +229,112 @@ xp() {
        explorer.exe $1
     fi
 }
-switch_default_terminal() {
-    settingsPath="/mnt/c/users/$USER/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json"
+term() {
+    WINUSER=$(wslvar USERNAME)
+    settingsPath="/mnt/c/users/$WINUSER/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json"
     greper="grep guid $settingsPath"
+    num='^[0-9]+$'
 
-    if [ $($greper -c) -ge $1 ]; then
-        uuid=$($greper | cut -d{ -f2 | cut -d} -f1 | head -n$1 | tail -n1)
-        sed -i "s/\"defaultProfile\": \"{.*}\"/\"defaultProfile\": \"{$uuid}\"/" $settingsPath
-    else
-        echo -e "\033[1;31mERROR:\033[0;31m cannot switch to terminal profile n°$1 because it does not exist.\033[0m"
+    if [ "$1" == "-l" ]; then
+        $greper | cut -d{ -f2 | cut -d} -f1
+    elif [ "$1" == "-c" ]; then
+        $greper -c
+    elif [[ $1 =~ $num ]]; then    
+        if [ $($greper -c) -ge $1 ]; then
+            uuid=$($greper | cut -d{ -f2 | cut -d} -f1 | sed -n "$1p")
+            sed -i "s/\"defaultProfile\": \"{.*}\"/\"defaultProfile\": \"{$uuid}\"/" $settingsPath
+        else
+            echo -e "\033[1;31mERROR:\033[0;31m cannot switch to terminal profile n°$1 because it does not exist.\033[0m"
+        fi
     fi
 }
-alias term='switch_default_terminal'
 
 ### FUN
 pnis() {
     ascii-image-converter /usr/share/welcome.png -cCx
 }
 alias pp='pnis'
+compile() {
+    listCount=$(find ~ | grep "\.py$|\..{,2}sh.{,2}$|\.c.{,2}$" -c)
+    while [ 1 -eq 1 ]; do
+        count=$(( count + 1 ))
+        file=$(find ~ | grep "\.py$|\..{,2}sh.{,2}$|\.c.{,2}$" | sed -n "$(( 1 + $RANDOM % $listCount ))p")
+        lineCount=$(wc -l < $file)
+        if [ $lineCount -gt 0 ]; then
+            line=$(sed -n "$(( 1 + $RANDOM % $lineCount ))p" < $file | grep -v "^#|^//" | sed -E "s: {2,}|\"\"\"|>>>::g")
+            if [ -n "$line" ]; then
+                if [ $(( $RANDOM % 2 )) -eq $(( $RANDOM % 2 )) ]; then 
+                    echo -n '    '
+                    if [ $(( $RANDOM % 2 )) -eq $(( $RANDOM % 2 )) ]; then
+                        echo -n '    '
+                        if [ $(( $RANDOM % 2 )) -eq $(( $RANDOM % 2 )) ]; then
+                            echo -n '    '
+                        fi
+                    fi
+                fi
+                echo $line 
+            fi
+            if [ $(( $RANDOM % 500 )) -eq $(( $RANDOM % 500 )) ]; then
+                loading
+                if [ $(( $RANDOM % 100 )) -eq $(( $RANDOM % 100 )) ]; then
+                    return
+                fi
+            fi
+            sleep 0.$(( $RANDOM % 3 ))$(( $RANDOM % 10 ))
+        fi
+    done
+}
+loading() {
+    no_neg() {
+        echo "$(( $1 < 1 ? 1 : $1 ))"
+    }
+    countLoad=0
+    tput civis
+    while [[ $countLoad -le 100 ]]; do
+        echo -ne "\r"
+        printf "%3d" $countLoad
+        echo -n "%  [ "
+        c=0
+        while [[ $c -le $(( $(( $(tput cols) -10 )) /10 *10 *$countLoad /100 )) ]]; do
+            echo -n "#"
+            c=$(( $c + 1 ))
+        done
+        while [[ $c -le $(( $(( $(tput cols) -10 )) /10 *10 )) ]]; do
+            echo -n " "
+            c=$(( $c + 1 ))
+        done
+        echo -n " ]"
+        countLoad=$(( $countLoad + 1 ))
+        sleep 0.$(( $RANDOM % $( no_neg $(( 3 - $(tput cols) )) ) ))$(( $RANDOM % 10 ))
+    done
+    sleep 1
+    echo -ne "\rDone"
+    if [ $(( $RANDOM % 2 )) -eq $(( $RANDOM % 2 )) ]; then
+        echo ✅
+    else
+        echo ❌
+    fi
+    tput cnorm
+}
 
-### SPOT
-alias ss='ssh spot'
-alias ssd='sshdis spot & sleep(3) && vncviewer :0 && kill %$(jobs | grep "sshdis spot" | cut -d[ -f2 | cut -d] -f1)'
+### CALC
+=() {
+    echo $(( $1 $2 $3 ))
+}
 
-alias rm*='rm *'
-alias r='reset'
-alias wpy='win py'
+### MISCS
+alias r='brc && reset'
+alias p='python3'
+alias spot='ssh spot'
+alias spotd='ssh spotd'
+alias ssd='sshdis spot & sleep 3 && vncviewer :0 && kill %$(jobs | grep "sshdis spot" | cut -d[ -f2 | cut -d] -f1)'
+alias cdr='cd ~ && reset'
+alias sshc='vim ~/.ssh/config'
+alias simeco='cmd.exe /c ssh simeco'
+cmd() (
+    c:
+    cmd.exe /c "$@"
+)
+alias ubs18c='ssh ubs18c'
+alias ubs18y='ssh ubs18y'
+alias history='HISTTIMEFORMAT="%d/%m/%Y at %H:%M:%S - " history'
