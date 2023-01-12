@@ -178,4 +178,9 @@ augroup numbertoggle
   autocmd BufLeave,FocusLost,WinLeave   * if &nu                  | set nornu | endif
 augroup END
 
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+    \| exe "normal! g'\"" | endif
+endif
+
 " }}}
