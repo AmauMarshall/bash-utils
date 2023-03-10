@@ -51,8 +51,3 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-
-# On startup (if commands require sudo, add line to /etc/sudoers: "%sudo ALL=(ALL) NOPASSWD: /path/to/command")
-if [ $(ifconfig | grep eth0:1 -c) -eq 0 ]; then
-    sudo ip addr add 192.168.0.2/24 broadcast 192.168.0.255 dev eth0 label eth0:1
-fi
