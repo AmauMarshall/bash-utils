@@ -29,6 +29,17 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
+if [ -f ~/.bash_prompt ]; then
+    alias prompt='source ~/.bash_prompt'
+    source ~/.bash_prompt
+else
+    PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+fi
+if [ -f ~/.bash_startup ]; then
+    alias startup='source ~/.bash_startup'
+    source ~/.bash_startup
+fi
+export PYTHONSTARTUP=~/.pyrc # Python prompt
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -45,10 +56,3 @@ fi
 if [ $(ifconfig | grep eth0:1 -c) -eq 0 ]; then
     sudo ip addr add 192.168.0.2/24 broadcast 192.168.0.255 dev eth0 label eth0:1
 fi
-
-# Set prompt
-prompt
-export PYTHONSTARTUP=~/.pyrc # Python prompt
-
-# startup folder choice
-startup
