@@ -58,11 +58,19 @@ alias startup='source ~/.bash_startup'
 
 ### LS
 alias ls='ls --color=auto'
-alias ll='ls -lF'
-alias lll='ls -alF'
+alias ll='ls -lhF'
+alias lll='ls -alhF'
 alias la='ls -A'
 alias l='ls -CF'
 alias lsdev='ls /dev/*'
+lsn() {
+    if [ -z "$1" ]; then
+        echo -n "$(pwd) "
+    else
+        echo -n "$(realpath $1) "
+    fi
+    ls -1 $1 | wc -l
+}
 
 ### RM
 alias rm*='rm *'
@@ -86,14 +94,22 @@ getip() {
     if [ -z "$1" ]; then
         ip -4 addr | /usr/bin/grep -oP '(?<=inet\s)\d+(\.\d+){3}'
     else
-        ip -4 addr show $1 | /usr/bin/grep -oP '(?<=inet\s)\d+(\.\d+){3}'
+        if [[ $1 =~ $NUM ]]; then
+            ip -4 addr | /usr/bin/grep -oP '(?<=inet\s)\d+(\.\d+){3}' | sed -n $1p
+        else
+            ip -4 addr show $1 | /usr/bin/grep -oP '(?<=inet\s)\d+(\.\d+){3}'
+        fi
     fi
 }
 lsip() {
      if [ -z "$1" ]; then
         ifconfig | /usr/bin/grep -v "^ " | /usr/bin/grep -v "^[[:space:]]*$" | cut -d' ' -f1
     else
-        ifconfig | /usr/bin/grep ^$1 | cut -d' ' -f1
+        if [[ $1 =~ $NUM ]]; then
+            ifconfig | /usr/bin/grep -v "^ " | /usr/bin/grep -v "^[[:space:]]*$" | cut -d':' -f1 | sed -n $1p
+        else
+            ifconfig | /usr/bin/grep ^$1 | cut -d':' -f1
+        fi
     fi
 }
 
@@ -171,8 +187,7 @@ alias p='python3'
 ### HISTORY
 alias history='HISTTIMEFORMAT="%d/%m/%Y at %H:%M:%S - " history'
 history-clear-from-or-last() {
-    num='^[0-9]+$'
-    if [ -n $1 ] && [[ $1 =~ $num ]]; then
+    if [ -n $1 ] && [[ $1 =~ $NUM ]]; then
         count=50
         while [[ $count -gt 0 ]]; do
             history -d $1
