@@ -90,27 +90,22 @@ astrogrep ()
 }
 
 ### NET
-getip() {
+lsip() {
     if [ -z "$1" ]; then
-        ip -4 addr | /usr/bin/grep -oP '(?<=inet\s)\d+(\.\d+){3}'
+        ip addr list | grep -v "^[[:space:]]" | awk '{print $2}' | cut -d: -f1
     else
         if [[ $1 =~ $NUM ]]; then
-            ip -4 addr | /usr/bin/grep -oP '(?<=inet\s)\d+(\.\d+){3}' | sed -n $1p
+            ip addr list | grep -v "^[[:space:]]" | awk '{print $2}' | cut -d: -f1 | sed -n $1p
         else
-            ip -4 addr show $1 | /usr/bin/grep -oP '(?<=inet\s)\d+(\.\d+){3}'
+            ip addr list | grep -v "^[[:space:]]" | awk '{print $2}' | cut -d: -f1 | grep "^$1"
         fi
     fi
 }
-lsip() {
-     if [ -z "$1" ]; then
-        ifconfig | /usr/bin/grep -v "^ " | /usr/bin/grep -v "^[[:space:]]*$" | cut -d' ' -f1
-    else
-        if [[ $1 =~ $NUM ]]; then
-            ifconfig | /usr/bin/grep -v "^ " | /usr/bin/grep -v "^[[:space:]]*$" | cut -d':' -f1 | sed -n $1p
-        else
-            ifconfig | /usr/bin/grep ^$1 | cut -d':' -f1
-        fi
-    fi
+getip() {
+    for net_dev in $(lsip $1); do
+        echo -en "$net_dev:\r\033[20C"
+        ip -4 addr show $net_dev | /usr/bin/grep -oP '(?<=inet\s)\d+(\.\d+){3}'
+    done
 }
 
 ### DOCKER
