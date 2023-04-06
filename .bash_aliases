@@ -30,7 +30,6 @@ renamepc() {
 ### CD
 alias cd..='cd ..'
 alias cd.='cd /'
-alias x='exit'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
@@ -53,8 +52,6 @@ alias bashal='vim ~/.bash_aliases && brc'
 alias profile='vim ~/.profile && source ~/.profile && brc'
 alias vimrc='vim ~/.vimrc'
 alias pyrc='vim ~/.pyrc'
-alias prompt='source ~/.bash_prompt'
-alias startup='source ~/.bash_startup'
 
 ### LS
 alias ls='ls --color=auto'
@@ -152,17 +149,8 @@ git-sparse-clone() {
 alias gc='git clone'
 alias gsc='git-sparse-clone'
 
-### PYTHON
-alias python='python3'
-alias py='python3'
-alias p='python3'
-
-### CALC
-=() {
-    echo $(( $1 $2 $3 ))
-}
-
 ### RESET
+alias x='exit'
 alias r='brc && reset'
 alias cdr='cd ~ && r'
 
