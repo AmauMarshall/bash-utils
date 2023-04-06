@@ -1,3 +1,6 @@
+# GLOBALS
+NUM='^[0-9]+$'
+
 ## ALIAS
 setalias() {
     if [ -n "$1" ] && [ -n "$2" ]; then
@@ -10,6 +13,12 @@ rmalias() {
         sed -i "s/^alias $1=/#alias $1=/" ~/.bash_aliases 
     fi
 }
+dealias() {
+    #echo -n "$1 >> "
+    alias $1 | cut -d\' -f2
+}
+complete -a dealias
+complete -a rmalias
 
 ### RENAME
 renamepc() {
@@ -38,9 +47,10 @@ alias aptrem='sudo apt autoremove -y'
 alias userls='cut -d: -f1 /etc/passwd'
 alias hcl='rm -f ~/.bash_history && history -c && reset'
 alias cls='rm -f ~/.bash_history && history -c && reset'
-alias brc='currentBrc=$(pwd) && source ~/.bashrc && cd "$currentBrc" && unset currentBrc'
+alias brc='currentBrc=$(pwd) && source ~/.bashrc && cd "$currentBrc" && unset currentBrc && [ -n "$VIRTUAL_ENV" ] && source $VIRTUAL_ENV/bin/activate || echo -n ""'
 alias bashrc='vim ~/.bashrc && brc'
 alias bashal='vim ~/.bash_aliases && brc'
+alias profile='vim ~/.profile && source ~/.profile && brc'
 alias vimrc='vim ~/.vimrc'
 alias pyrc='vim ~/.pyrc'
 alias prompt='source ~/.bash_prompt'
@@ -88,6 +98,7 @@ lsip() {
 }
 
 ### DOCKER
+alias d='docker'
 alias dc='docker-compose'
 dcres() {
     if [ -n "$1" ]; then
@@ -122,7 +133,8 @@ git-sparse-clone() {
     mkdir $2
     git clone --no-checkout $1 $2
     cd $2
-    git sparse-checkout set $3 $4 $5
+    shift 2
+    git sparse-checkout set $@
     git checkout
     cd $CURR_PATH
 }
@@ -141,10 +153,20 @@ alias p='python3'
 
 ### RESET
 alias r='brc && reset'
-alias cdr='cd ~ && reset'
+alias cdr='cd ~ && r'
 
 ### SSH
 alias sshc='vim ~/.ssh/config'
+
+### PYTHON
+alias python='python3'
+alias py='python3'
+alias p='python3'
+
+### CALC
+=() {
+    echo $(( $1 $2 $3 ))
+}
 
 ### HISTORY
 alias history='HISTTIMEFORMAT="%d/%m/%Y at %H:%M:%S - " history'
