@@ -1,0 +1,103 @@
+#!/bin/bash
+
+function help_caller() {
+    echo -e '\033[0;31m-n\033[0m    | \033[0;31m--name\033[0m                           => config name'
+    echo -e '\033[0;31m-hn\033[0m   | \033[0;31m--host-name\033[0m                      => remote hostname'
+    echo -e '\033[0;31m-u\033[0m    | \033[0;31m--user\033[0m                           => remote user'
+    echo -e '\033[0;31m-if\033[0m   | \033[0;31m--identity-file\033[0m                  => identity file to use (public key) [OPTIONAL]'
+    echo -e '\033[0;31m-nshc\033[0m | \033[0;31m--no-strict-hostkey-checking\033[0m     => if used, sets "StrictHostKeyChecking" to no [OPTIONAL]'
+    echo -e '\033[0;31m-uhf\033[0m  | \033[0;31m--user-knownhosts-file\033[0m           => known_hosts file to use (use absolute path) [OPTIONAL]'
+    echo -e '\033[0;31m-ll\033[0m   | \033[0;31m--log-level\033[0m                      => log level (to avoid warnings, it is advised to use "ERROR" and not "QUIET" [OPTIONAL]'
+    echo -e '\033[0;31m-h\033[0m    | \033[0;31m--help\033[0m                           => show this help message'
+    echo -e '\033[0;31m-e\033[0m    | \033[0;31m--edit\033[0m                           => edit ~/.bin/ssh-new-host'
+}
+
+if [ -z "$1" ]; then
+    help_caller
+    exit
+fi
+
+OPTION_NAME=
+OPTION_HOSTNAME=
+OPTION_USER=
+OPTION_IDENTITYFILE=
+OPTION_NOSTRICTHOSTKEYCHECKING=
+OPTION_USERKNOWNHOSTFILE=
+OPTION_LOGLEVEL=
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        -h|--help) help_caller; exit;;
+
+        -n|--name) 
+            OPTION_NAME=$2
+            shift 2;;
+        -hn|--host-name) 
+            OPTION_HOSTNAME=$2
+            shift 2;;
+        -u|--user) 
+            OPTION_USER=$2
+            shift 2;;
+        -if|--identity-file)
+            OPTION_IDENTITYFILE=$2
+            shift 2;;
+        -nshc|--no-strict-hostkey-checking)
+            OPTION_NOSTRICTHOSTKEYCHECKING=true
+            shift 1;;
+        -uhf|--user-knownhosts-file)
+            OPTION_USERKNOWNHOSTFILE=$2
+            shift 2;;
+        -ll|--log-level)
+            OPTION_LOGLEVEL=$2
+            shift 2;;
+
+        -e|--edit)
+            vim ~/.bin/ssh-new-host
+            exit;;
+
+        -*) echo "unknown option: $1" >&2; exit;;
+        *) echo "unknown option: $1" >&2; exit;;
+    esac
+done
+
+SSH_CONFIG_FILE="$HOME/.ssh/config"
+
+if [ -n "$(cat $SSH_CONFIG_FILE | tail -n1)" ]; then
+    NEW_CONFIG="\n"
+fi
+
+if [ -z "$OPTION_NAME" ]; then
+    echo "ERROR: please indicate the NAME of your new host config using flags -n or --name."
+    exit
+fi
+NEW_CONFIG=$NEW_CONFIG"Host $OPTION_NAME"
+
+if [ -z "$OPTION_HOSTNAME" ]; then
+    echo "ERROR: please indicate the HOSTNAME for your new host using flags -hn or --host-name."
+    exit
+fi
+NEW_CONFIG="$NEW_CONFIG\n\tHostname $OPTION_HOSTNAME"
+
+if [ -z "$OPTION_USER" ]; then
+    echo "ERROR: please indicate the USER for your new host using flags -u or --user."
+    exit
+fi
+NEW_CONFIG="$NEW_CONFIG\n\tUser $OPTION_USER"
+
+if [ -n "$OPTION_IDENTITYFILE" ]; then
+    NEW_CONFIG="$NEW_CONFIG\n\tIdentityFile $OPTION_IDENTITYFILE"
+fi
+
+if [ "$OPTION_NOSTRICTHOSTKEYCHECKING" = true ]; then
+    NEW_CONFIG="$NEW_CONFIG\n\tStrictHostKeyChecking no"
+fi
+
+if [ -n "$OPTION_USERKNOWNHOSTFILE" ]; then
+    NEW_CONFIG="$NEW_CONFIG\n\tUserKnownHostsFile $OPTION_USERKNOWNHOSTFILE"
+fi
+
+if [ -n "$OPTION_LOGLEVEL" ]; then
+    NEW_CONFIG="$NEW_CONFIG\n\tLogLevel $OPTION_LOGLEVEL"
+fi
+
+echo -e $NEW_CONFIG >> $SSH_CONFIG_FILE
