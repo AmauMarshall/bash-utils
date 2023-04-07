@@ -156,6 +156,25 @@ alias cdr='cd ~ && r'
 
 ### SSH
 alias sshc='vim ~/.ssh/config'
+sshl() {
+    if [ -z "$1" ]; then
+        filter="^"
+    else
+        filter=$1
+    fi
+    for sshost in $(cat ~/.ssh/config | grep "^Host" | awk '{print $2}' | grep -E "$filter"); do
+        echo -en "$sshost\r\033[$(( $(echo "$sshost" | wc -c) - 1))C:\r\033[15C"
+        sed -n $(($(cat ~/.ssh/config | grep -n "^Host" | grep "$sshost$" | cut -d: -f1) + 1))p ~/.ssh/config | awk '{print $2}' | tr -sc 0-9. ' '
+        echo
+    done
+}
+ssht() {
+    for line in $(sshl $1); do
+        sshost=$(echo $line | cut -d: -f2 | sed -E "s/\\r[[:cntrl:]]\[[0-9]{,3}[a-zA-Z]{1}//g")
+        echo -en "$line:\r\033[35C"
+        nmap $sshost -PN -p ssh | grep 'open|closed|filtered'
+    done
+}
 
 ### PYTHON
 alias python='python3'
