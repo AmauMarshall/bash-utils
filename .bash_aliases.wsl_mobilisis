@@ -19,9 +19,10 @@ renamepc() {
 }
 
 ### CD
-alias cd..='cd ..'
 alias cd.='cd /'
 alias x='exit'
+alias r='brc && reset'
+alias cdr='cd ~ && reset'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
@@ -53,9 +54,6 @@ alias lll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 alias lsdev='ls /dev/*'
-
-### RM
-alias rm*='rm *'
 
 ### GREP
 alias grep='grep --color=auto -E'
@@ -195,6 +193,7 @@ killproc() {
 ### PYTHON
 alias python='python3'
 alias py='python3'
+alias p='python3'
 
 ### SSH
 sshdis() {
@@ -323,18 +322,9 @@ loading() {
 }
 
 ### MISCS
-alias r='brc && reset'
-alias p='python3'
-alias spot='ssh spot'
-alias spotd='ssh spotd'
-alias ssd='sshdis spot & sleep 3 && vncviewer :0 && kill %$(jobs | grep "sshdis spot" | cut -d[ -f2 | cut -d] -f1)'
-alias cdr='cd ~ && reset'
 alias sshc='vim ~/.ssh/config'
-alias simeco='cmd.exe /c ssh simeco'
 cmd() (
     c:
     cmd.exe /c "$@"
 )
-alias ubs18c='ssh ubs18c'
-alias ubs18y='ssh ubs18y'
 alias history='HISTTIMEFORMAT="%d/%m/%Y at %H:%M:%S - " history'
