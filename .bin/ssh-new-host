@@ -62,6 +62,10 @@ done
 
 SSH_CONFIG_FILE="$HOME/.ssh/config"
 
+if [ ! -f $SSH_CONFIG_FILE ]; then
+    touch $SSH_CONFIG_FILE
+fi
+
 if [ -n "$(cat $SSH_CONFIG_FILE | tail -n1)" ]; then
     NEW_CONFIG="\n"
 fi
